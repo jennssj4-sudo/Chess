@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#171512"><title>Chess Classic</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<style>
+:root{--bg:#171512;--panel:#24211d;--light:#f0d9b5;--dark:#b58863;--green:#829b55;--gold:#d5b36a}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#332b22,#171512 70%);color:#f4eee5;font:16px system-ui, sans-serif}header{padding:16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff20;max-width:1100px;margin:auto}.logo{font-weight:900;letter-spacing:2px}.logo span{color:var(--gold)}small{color:#aaa092}main{max-width:1100px;margin:22px auto;padding:0 14px;display:grid;grid-template-columns:minmax(280px,680px) minmax(250px,1fr);gap:20px}.boardbox,.panel{background:var(--panel);border:1px solid #ffffff16;border-radius:15px;padding:12px;box-shadow:0 16px 40px #0006}.player{display:flex;justify-content:space-between;align-items:center;padding:7px 3px}.clock{background:#39342d;padding:7px 13px;border-radius:8px;font-weight:800;font-variant-numeric:tabular-nums}.clock.active{background:#eee5d5;color:#24211d}.board{display:grid;grid-template-columns:repeat(8,1fr);aspect-ratio:1;overflow:hidden;border-radius:5px;touch-action:manipulation}.sq{border:0;padding:0;position:relative;display:grid;place-items:center;aspect-ratio:1;min-width:0;cursor:pointer}.sq.l{background:var(--light)}.sq.d{background:var(--dark)}.sq.sel{background:#baca44}.sq.last{box-shadow:inset 0 0 0 999px #f5e66355}.piece{font-family:"DejaVu Sans",serif;font-size:clamp(28px,7.5vw,62px);line-height:1;user-select:none;filter:drop-shadow(0 2px 1px #0005)}.white{color:#fffdf5;text-shadow:0 1px 2px #4d3b2a,1px 2px #4d3b2a,-1px -1px #4d3b2a}.black{color:#24201b;text-shadow:0 1px 1px #fff6}.dot{position:absolute;width:23%;height:23%;border-radius:50%;background:#26391e70}.ring{position:absolute;inset:4%;border:5px solid #26391e70;border-radius:50%}.coord{position:absolute;left:3px;bottom:1px;font-size:10px;font-weight:bold;opacity:.75}.l .coord{color:#956b49}.d .coord{color:#f5e1c9}.panel h2{margin:2px 0 13px;font-size:20px}.status{background:#332e27;padding:12px;border-radius:9px;min-height:45px;margin-bottom:12px}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{border:1px solid #ffffff20;background:#39342d;color:#fff;border-radius:9px;padding:11px 7px;font-weight:650;cursor:pointer}.btn.main{background:var(--green);color:#151a10;border:0}.setting{display:flex;justify-content:space-between;align-items:center;margin-top:14px;color:#c2b8aa;font-size:14px}.setting select{background:#39342d;color:white;padding:8px;border:1px solid #ffffff25;border-radius:8px}.moves{border-top:1px solid #ffffff20;margin-top:16px;padding-top:13px}.moves h3{font-size:13px;color:#aaa092}.list{display:grid;grid-template-columns:35px 1fr 1fr;gap:3px;max-height:230px;overflow:auto;font-variant-numeric:tabular-nums}.list span{padding:5px;border-radius:5px}.num{color:#a69a89}.hint{color:#aaa092;font-size:12px;line-height:1.5;margin-top:14px}.modal{display:none;position:fixed;inset:0;background:#000b;place-items:center;z-index:9}.modal.show{display:grid}.dialog{background:#29241e;padding:22px;border-radius:14px;text-align:center}.dialog button{font-size:30px;margin:5px;background:#40392f;color:white;border:0;border-radius:8px;padding:8px}
+@media(max-width:740px){main{grid-template-columns:1fr;margin:10px auto;gap:12px;padding:0 9px}.boardbox{padding:8px}.piece{font-size:clamp(28px,10vw,58px)}header{padding:13px}}
+</style></head><body>
+<header><div><div class="logo">♟ <span>CHESS</span> CLASSIC</div><small>КЛАССИЧЕСКИЕ ШАХМАТЫ · 2 ИГРОКА</small></div><small>LOCAL PLAY</small></header>
+<main><section class="boardbox"><div class="player"><b>♚ ЧЁРНЫЕ</b><span class="clock" id="bc">10:00</span></div><div class="board" id="board"></div><div class="player"><b>♔ БЕЛЫЕ</b><span class="clock active" id="wc">10:00</span></div></section>
+<aside class="panel"><h2>Партия</h2><div class="status" id="status">Ход белых. Выберите фигуру.</div><div class="buttons"><button class="btn main" id="new">＋ Новая партия</button><button class="btn" id="undo">↶ Отменить ход</button><button class="btn" id="flip">⇅ Перевернуть доску</button><button class="btn" id="resign">Завершить партию</button></div>
+<div class="setting"><label for="time">Время на игрока</label><select id="time"><option value="0">Без часов</option><option value="180">3 минуты</option><option value="300">5 минут</option><option value="600" selected>10 минут</option><option value="900">15 минут</option><option value="1800">30 минут</option></select></div>
+<div class="moves"><h3>ИСТОРИЯ ХОДОВ</h3><div class="list" id="moves"><span class="num">—</span><span>Пока нет ходов</span></div></div><div class="hint">Нажмите на фигуру, затем на подсвеченное поле. Поддерживаются шах, мат, пат, рокировка, взятие на проходе, превращение пешки и ничья по правилам шахмат.</div></aside></main>
+<div class="modal" id="promotion"><div class="dialog"><h3>Выберите превращение</h3><div id="choices"></div></div></div>
+<script>
+(()=>{
+if(typeof Chess==='undefined'){document.getElementById('status').textContent='Не удалось загрузить шахматный движок. Проверьте подключение к интернету и обновите страницу.';return}
+const g=new Chess(),board=document.getElementById('board'),status=document.getElementById('status'),moves=document.getElementById('moves'),files='abcdefgh',symbols={wk:'♔',wq:'♕',wr:'♖',wb:'♗',wn:'♘',wp:'♙',bk:'♚',bq:'♛',br:'♜',bb:'♝',bn:'♞',bp:'♟'};
+let selected=null,targets=[],flipped=false,last=null,remaining={w:600,b:600},timer=null,pending=null;
+const time=()=>Number(document.getElementById('time').value);
+function name(r,c){return files[c]+(8-r)}
+function render(){
+board.innerHTML='';const pos=g.board();
+for(let vr=0;vr<8;vr++)for(let vc=0;vc<8;vc++){
+const r=flipped?7-vr:vr,c=flipped?7-vc:vc,s=name(r,c),p=pos[r][c],el=document.createElement('button');
+el.className='sq '+((r+c)%2?'d':'l')+(selected===s?' sel':'')+(last&&(last.from===s||last.to===s)?' last':'');
+el.setAttribute('aria-label',s);if(p){const span=document.createElement('span');span.className='piece '+(p.color==='w'?'white':'black');span.textContent=symbols[p.color+p.type];el.appendChild(span)}
+if(targets.some(m=>m.to===s)){const mark=document.createElement('i');mark.className=p?'ring':'dot';el.appendChild(mark)}
+if((!flipped&&vc===0)||(flipped&&vc===7)){const co=document.createElement('span');co.className='coord';co.textContent=8-r;el.appendChild(co)}
+if((!flipped&&vr===7)||(flipped&&vr===0)){const co=document.createElement('span');co.className='coord';co.style.left='auto';co.style.right='3px';co.style.top='2px';co.style.bottom='auto';co.textContent=files[c];el.appendChild(co)}
+el.onclick=()=>tap(s);board.appendChild(el)
+}update();
+}
+function tap(s){if(g.game_over())return;const p=g.get(s);if(selected){const move=targets.find(m=>m.to===s);if(move){if(move.flags.includes('p')){pending={from:selected,to:s};promotion();return}play(selected,s);return}}
+if(p&&p.color===g.turn()){selected=s;targets=g.moves({square:s,verbose:true})}else{selected=null;targets=[]}render()}
+function play(from,to,p='q'){const result=g.move({from,to,promotion:p});if(result){last={from,to};selected=null;targets=[];render()}}
+function promotion(){const modal=document.getElementById('promotion'),choices=document.getElementById('choices');choices.innerHTML='';for(const t of ['q','r','b','n']){const b=document.createElement('button');b.textContent=symbols[g.turn()+t];b.onclick=()=>{play(pending.from,pending.to,t);pending=null;modal.classList.remove('show')};choices.appendChild(b)}modal.classList.add('show')}
+function update(){let msg=g.turn()==='w'?'Ход белых':'Ход чёрных';if(g.in_checkmate())msg='Мат! Победили '+(g.turn()==='w'?'чёрные':'белые')+'.';else if(g.in_stalemate())msg='Пат — ничья.';else if(g.in_draw())msg='Ничья.';else if(g.in_check())msg+=' — шах!';status.textContent=msg;
+const h=g.history();moves.innerHTML='';if(!h.length)moves.innerHTML='<span class="num">—</span><span>Пока нет ходов</span>';for(let i=0;i<h.length;i+=2){const n=document.createElement('span'),w=document.createElement('span'),b=document.createElement('span');n.className='num';n.textContent=(i/2+1)+'.';w.textContent=h[i];b.textContent=h[i+1]||'';moves.append(n,w,b)}moves.scrollTop=moves.scrollHeight;
+document.getElementById('wc').classList.toggle('active',g.turn()==='w'&&!g.game_over());document.getElementById('bc').classList.toggle('active',g.turn()==='b'&&!g.game_over())}
+function fmt(n){return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')}
+function clocks(){document.getElementById('wc').textContent=fmt(remaining.w);document.getElementById('bc').textContent=fmt(remaining.b)}
+function startTimer(){clearInterval(timer);timer=setInterval(()=>{if(!time()||g.game_over())return;const c=g.turn();remaining[c]=Math.max(0,remaining[c]-1);clocks();if(!remaining[c]){clearInterval(timer);status.textContent=(c==='w'?'Белые':'Чёрные')+' проиграли по времени.'}},1000)}
+function reset(){g.reset();selected=null;targets=[];last=null;const t=time();remaining={w:t,b:t};clocks();render();startTimer()}
+document.getElementById('new').onclick=()=>{if(confirm('Начать новую партию?'))reset()};
+document.getElementById('undo').onclick=()=>{g.undo();last=null;selected=null;targets=[];render()};
+document.getElementById('flip').onclick=()=>{flipped=!flipped;render()};
+document.getElementById('resign').onclick=()=>{if(!g.game_over()){status.textContent=(g.turn()==='w'?'Белые':'Чёрные')+' завершили партию.';clearInterval(timer)}};
+document.getElementById('time').onchange=reset;
+clocks();render();startTimer();
+})();
+</script></body></html>
